@@ -1,28 +1,32 @@
-import { BigNumber, BigNumberish, Contract } from 'ethers'
-import { appSelect } from 'src/app/appSelect'
-import { getContractByAddress, getTokenContract } from 'src/blockchain/contracts'
-import { getProvider } from 'src/blockchain/provider'
-import { config } from 'src/config'
-import { BALANCE_STALE_TIME } from 'src/consts'
+import 'src/polyfills/buffer'; // Must be the first import
+import { BigNumber, BigNumberish, Contract } from 'ethers';
+import * as plumo from 'plumo-verifier';
+import { appSelect } from 'src/app/appSelect';
+import { getContractByAddress, getTokenContract } from 'src/blockchain/contracts';
+import { getProvider } from 'src/blockchain/provider';
+import { config } from 'src/config';
+import { BALANCE_STALE_TIME } from 'src/consts';
 import {
   balancesInitialState,
   setVoterBalances,
   updateBalances
-} from 'src/features/balances/balancesSlice'
-import { fetchCeloBalanceVerified } from 'src/features/balances/fetchBalancesVerified'
-import { Balances } from 'src/features/balances/types'
-import { areBalancesEmpty } from 'src/features/balances/utils'
-import { fetchLockedCeloStatus, fetchTotalLocked } from 'src/features/lock/fetchLockedStatus'
-import { LockedCeloBalances } from 'src/features/lock/types'
-import { getMigratedTokens } from 'src/features/tokens/migration'
-import { TokenMap } from 'src/features/tokens/types'
-import { isNativeTokenAddress } from 'src/features/tokens/utils'
-import { fetchStakingBalances } from 'src/features/validators/fetchGroupVotes'
-import { fetchAccountStatus } from 'src/features/wallet/accounts/accountsContract'
-import { CELO } from 'src/tokens'
-import { createMonitoredSaga } from 'src/utils/saga'
-import { isStale } from 'src/utils/time'
-import { call, put } from 'typed-redux-saga'
+} from 'src/features/balances/balancesSlice';
+import { Balances } from 'src/features/balances/types';
+import { areBalancesEmpty } from 'src/features/balances/utils';
+import { fetchLockedCeloStatus, fetchTotalLocked } from 'src/features/lock/fetchLockedStatus';
+import { LockedCeloBalances } from 'src/features/lock/types';
+import { getMigratedTokens } from 'src/features/tokens/migration';
+import { TokenMap } from 'src/features/tokens/types';
+import { isNativeTokenAddress } from 'src/features/tokens/utils';
+import { fetchStakingBalances } from 'src/features/validators/fetchGroupVotes';
+import { fetchAccountStatus } from 'src/features/wallet/accounts/accountsContract';
+import { CELO } from 'src/tokens';
+import { logger } from 'src/utils/logger';
+import { createMonitoredSaga } from 'src/utils/saga';
+import { isStale } from 'src/utils/time';
+import { call, put } from 'typed-redux-saga';
+
+
 
 // Fetch wallet balances and other frequently used data like votes
 // Essentially, fetch all the data that forms need to validate inputs
@@ -87,12 +91,13 @@ async function fetchTokenBalances(
 // TODO Figure out why the balanceOf result is incorrect for GoldToken
 // Contractkit works around this in the same way, must be a low-level issue
 async function fetchCeloBalance(address: Address, useVerified?: boolean) {
+  const provider = getProvider()
   if (!useVerified) {
-    const provider = getProvider()
     const balance = await provider.getBalance(address)
     return { tokenAddress: CELO.address, value: balance.toString() }
   } else {
-    const verifiedBalance = await fetchCeloBalanceVerified(address)
+    const plumoVerifier = new plumo.PlumoVerifier(logger, provider, Buffer)
+    const verifiedBalance = await plumoVerifier.fetchCeloBalanceVerified(address)
     return { tokenAddress: CELO.address, value: verifiedBalance.toString() }
   }
 }
@@ -107,7 +112,9 @@ async function fetchTokenBalance(address: Address, tokenAddress: Address, useVer
   if (!contract) throw new Error(`No contract found for token: ${tokenAddress}`)
   let balance: BigNumberish;
   if (isNativeTokenAddress(tokenAddress) && useVerified ) {
-    balance = await fetchCeloBalanceVerified(address, tokenAddress)
+    const provider = getProvider()
+    const plumoVerifier = new plumo.PlumoVerifier(logger, provider, Buffer)
+    balance = await plumoVerifier.fetchCeloBalanceVerified(address, tokenAddress)
   } else {
     balance = await contract.balanceOf(address)
   }

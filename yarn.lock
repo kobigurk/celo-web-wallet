@@ -3265,6 +3265,13 @@ big.js@^5.2.2:
   resolved "https://registry.yarnpkg.com/big.js/-/big.js-5.2.2.tgz#65f0af382f578bcdc742bd9c281e9cb2d7768328"
   integrity sha512-vyL2OymJxmarO8gxMr0mhChsO9QGwhynfuu4+MHTAW6czfq9humCB7rKpUjDd9YUiDPU4mzpyupFSvOClAwbmQ==
 
+bigint-buffer@1.1.5:
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/bigint-buffer/-/bigint-buffer-1.1.5.tgz#d038f31c8e4534c1f8d0015209bf34b4fa6dd442"
+  integrity sha512-trfYco6AoZ+rKhKnxA0hgX0HAbVP/s808/EuDSe2JDzUnCp/xAsli35Orvk67UrTEcwuxZqYZDmfA2RXJgxVvA==
+  dependencies:
+    bindings "^1.3.0"
+
 bignumber.js@^9.0.1:
   version "9.0.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-9.0.1.tgz#8d7ba124c882bfd8e43260c67475518d0689e4e5"
@@ -3275,7 +3282,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
   integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
 
-bindings@^1.5.0:
+bindings@^1.3.0, bindings@^1.5.0:
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/bindings/-/bindings-1.5.0.tgz#10353c9e945334bc0511a6d90b38fbc7c9c504df"
   integrity sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==
@@ -4822,7 +4829,7 @@ etag@~1.8.1:
     merkle-patricia-tree "github:zmitton/merkle-patricia-tree#build"
     promisfy "^1.2.0"
 
-eth-util-lite@^1.0.1:
+eth-util-lite@1.0.1, eth-util-lite@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/eth-util-lite/-/eth-util-lite-1.0.1.tgz#e0eef3dd317375f22548cda4ca483807a63fa71a"
   integrity sha512-I9zp4kqxEjYhyvpAlap4uupvlwIgCUMDcZCaPNcny6wYUA2hhBkNlAwsMaqhTa19LpYVWsd9TABdx8M1ZUrJ2A==
@@ -7383,6 +7390,16 @@ plist@^3.0.1:
   dependencies:
     base64-js "^1.5.1"
     xmlbuilder "^9.0.7"
+
+plumo-verifier@0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/plumo-verifier/-/plumo-verifier-0.1.2.tgz#14df1347a968bd89003bfc1fca3a176a352f46c3"
+  integrity sha512-oJF/8LY8zrLUhAZ5+s1ZWj7zSswK//0y6Xh4dvwQfLo1deltPFmPyJqC0/mw+fa3/ZExFVMW00Tsj7s80MQsUQ==
+  dependencies:
+    bigint-buffer "1.1.5"
+    eth-proof "github:kobigurk/celo-proof#d79c3cf39a05f4832426adce1fb30e2fa938776c"
+    eth-util-lite "1.0.1"
+    rlp "^3.0.0"
 
 portfinder@^1.0.28:
   version "1.0.28"
